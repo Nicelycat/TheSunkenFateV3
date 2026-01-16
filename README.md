@@ -1,12 +1,12 @@
 <div align=center>
 
-<img src="media/logo.png" width="80" alt="Lunaar Lite Logo" align="center">
+<img src="media/logo.png" width="80" alt="The Sunken Fate logo" align="center">
 
-# Lunaar Lite
+# The Sunken Fate V3
 
 <img src="image.png" width="600" alt="Lunaar Lite Site Screenshot">
 
-A lite version of the Lunaar Site featuring a modern design with over 800+ games.
+A newer version of the Lunaar Site featuring a modern design with over 800+ games.
 
 ## Features
 
@@ -19,8 +19,5 @@ A lite version of the Lunaar Site featuring a modern design with over 800+ games
 
 ## Deployment
 
-To deploy your own instance of Lunaar Lite, follow the deployment guide at [https://docs.lunaar.org/deployment/lite/](https://docs.lunaar.org/deployment/lite/).
 
-### Forking
-
-If you fork this repository, remember to sync your fork periodically to keep the games list updated and ensure all games continue working properly.
+THANK YOU PARCOIL
