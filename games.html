@@ -52,6 +52,67 @@
         text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
       }
 
+      /* Panic Button Styles */
+      .panic-button {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 9999;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 50px;
+        font-weight: 700;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .panic-button:hover {
+        transform: scale(1.05) translateY(-2px);
+        box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      }
+
+      .panic-button:active {
+        transform: scale(0.95);
+      }
+
+      .panic-button i {
+        font-size: 16px;
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.1); }
+      }
+
+      /* Mobile adjustment for panic button */
+      @media (max-width: 640px) {
+        .panic-button {
+          top: 15px;
+          left: 15px;
+          padding: 10px 16px;
+          font-size: 12px;
+        }
+        .panic-button span {
+          display: none;
+        }
+        .panic-button i {
+          font-size: 18px;
+          margin: 0;
+        }
+      }
+
       .game-popup-overlay {
         position: fixed;
         top: 0;
@@ -59,7 +120,7 @@
         width: 100%;
         height: 100%;
         background: rgba(10, 10, 35, 0.95);
-        z-index: 9999;
+        z-index: 9998;
         backdrop-filter: blur(5px);
         display: flex;
         align-items: center;
@@ -248,10 +309,58 @@
       body {
         padding-top: 80px;
       }
+
+      /* Lazy loading placeholder */
+      .game-card {
+        transition: opacity 0.3s ease, transform 0.3s ease;
+      }
+      
+      .game-card.loading {
+        opacity: 0.6;
+      }
+
+      .game-image {
+        transition: opacity 0.3s ease;
+      }
+      
+      .game-image.loading {
+        opacity: 0;
+      }
+
+      /* Virtual scroll optimization */
+      .game-grid {
+        contain: layout style paint;
+      }
+
+      /* Search loading indicator */
+      .search-loading {
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+
+      /* Cache indicator */
+      .cache-badge {
+        font-size: 10px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: rgba(46, 213, 115, 0.2);
+        color: #2ed573;
+        border: 1px solid rgba(46, 213, 115, 0.3);
+      }
     </style>
   </head>
 
   <body class="bg-gray-900 text-white min-h-screen">
+    <!-- Panic Button - Top Left Corner -->
+    <button class="panic-button" onclick="window.location.href='https://clever.com'" title="Emergency Exit - Go to Clever">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Panic</span>
+    </button>
+
     <!-- Navigation Bar -->
     <nav class="nav-glass fixed top-0 left-0 right-0 z-50 px-6 py-3">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -283,16 +392,26 @@
 
       <main class="container mx-auto p-4 max-w-7xl">
         <div class="mb-6 space-y-4">
-          <input
-            type="text"
-            x-model="searchQuery"
-            @input="applyFilters()"
-            :placeholder="searchPlaceholder"
-            class="w-full px-4 py-3 bg-gray-800 text-white rounded-2xl border border-gray-700 focus:outline-none focus:border-purple-500 transition"
-          />
+          <div class="relative">
+            <input
+              type="text"
+              x-model="searchQuery"
+              @input="debouncedSearch()"
+              :placeholder="searchPlaceholder"
+              :class="{'search-loading': isSearching}"
+              class="w-full px-4 py-3 bg-gray-800 text-white rounded-2xl border border-gray-700 focus:outline-none focus:border-purple-500 transition"
+            />
+            <div class="absolute right-3 top-1/2 transform -translate-y-1/2 flex items-center gap-2">
+              <span x-show="usingCache" class="cache-badge">CACHED</span>
+              <i x-show="isSearching" class="fas fa-spinner fa-spin text-gray-400"></i>
+            </div>
+          </div>
 
-          <div class="text-center text-gray-400">
-            <span x-text="filteredGames.length"></span> games available
+          <div class="flex justify-between items-center text-sm text-gray-400 px-2">
+            <span x-text="filteredGames.length + ' games available'"></span>
+            <button @click="clearCache()" class="text-xs hover:text-white transition" x-show="usingCache">
+              <i class="fas fa-sync-alt mr-1"></i>Refresh Data
+            </button>
           </div>
         </div>
 
@@ -311,19 +430,23 @@
 
         <div
           x-show="!loading && filteredGames.length > 0"
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 game-grid"
+          id="gamesGrid"
         >
-          <template x-for="(game, index) in filteredGames" :key="index">
+          <template x-for="(game, index) in visibleGames" :key="game.id || index">
             <div
-              class="bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105 cursor-pointer"
+              class="bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-purple-500/50 transition-all hover:scale-105 cursor-pointer game-card"
+              :data-index="index"
+              :id="'game-' + index"
               @click="openGame(game)"
             >
-              <div class="relative aspect-square bg-gray-700">
+              <div class="relative aspect-square bg-gray-700 overflow-hidden">
                 <img
-                  :src="getGameImage(game)"
+                  :data-src="getGameImage(game)"
                   :alt="game.name"
-                  class="w-full h-full object-cover"
+                  class="w-full h-full object-cover game-image loading"
                   loading="lazy"
+                  @load="$event.target.classList.remove('loading')"
                 />
                 <div class="absolute top-2 left-2 flex flex-col gap-1">
                   <span
@@ -361,6 +484,22 @@
               </div>
             </div>
           </template>
+        </div>
+
+        <!-- Load More Trigger -->
+        <div 
+          x-show="hasMoreGames" 
+          class="text-center py-8"
+          id="loadMoreTrigger"
+        >
+          <button 
+            @click="loadMore()" 
+            class="px-6 py-3 bg-gray-800 rounded-xl hover:bg-gray-700 transition flex items-center gap-2 mx-auto"
+            :disabled="loadingMore"
+          >
+            <i x-show="loadingMore" class="fas fa-spinner fa-spin"></i>
+            <span x-text="loadingMore ? 'Loading...' : 'Load More Games'"></span>
+          </button>
         </div>
       </main>
 
@@ -427,17 +566,28 @@
     <script>
       const cdnUrl = "https://mathcenter.space";
       const cdnUrl2 = "https://corsproxy.io/?url=";
+      const CACHE_KEY = 'fate_games_cache';
+      const CACHE_DURATION = 1000 * 60 * 30; // 30 minutes
+      const GAMES_PER_PAGE = 24; // Virtual scrolling batch size
 
       function gamesApp() {
         return {
           allGames: [],
           filteredGames: [],
+          visibleGames: [],
           searchQuery: "",
           searchPlaceholder: "Search for games",
           loading: true,
+          loadingMore: false,
           popupOpen: false,
           currentGame: null,
           showWarningModal: true,
+          usingCache: false,
+          isSearching: false,
+          searchTimeout: null,
+          currentPage: 0,
+          hasMoreGames: false,
+          imageObserver: null,
 
           async init() {
             this.showWarningModal =
@@ -445,39 +595,186 @@
               !localStorage.getItem("warningModalShown");
 
             console.log(
-              "%cFATE%c V3 - Loading...",
+              "%cFATE%c V3 - Optimized Loading...",
               "font-size: 16px; background-color: #0f3460; border-radius: 5px 0 0 5px; padding: 4px; font-weight: bold;",
               "font-size: 16px; background-color: #0a0a23; font-weight: bold; padding: 4px; border-radius: 0 5px 5px 0;"
             );
 
+            // Initialize intersection observer for lazy loading images
+            this.initImageObserver();
+            
+            // Try to load from cache first for instant display
+            const cached = this.getCachedGames();
+            if (cached) {
+              this.allGames = cached;
+              this.filteredGames = cached;
+              this.updateVisibleGames();
+              this.usingCache = true;
+              this.loading = false;
+              
+              // Silently refresh in background
+              this.refreshGamesInBackground();
+            } else {
+              await this.loadGames();
+            }
+
+            // Setup intersection observer for infinite scroll
+            this.initInfiniteScroll();
+          },
+
+          initImageObserver() {
+            // Use Intersection Observer for lazy loading images
+            this.imageObserver = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  const img = entry.target;
+                  const src = img.getAttribute('data-src');
+                  if (src) {
+                    // Create a new image to preload
+                    const preloadImg = new Image();
+                    preloadImg.onload = () => {
+                      img.src = src;
+                      img.removeAttribute('data-src');
+                    };
+                    preloadImg.src = src;
+                    this.imageObserver.unobserve(img);
+                  }
+                }
+              });
+            }, {
+              rootMargin: '50px 0px', // Start loading 50px before viewport
+              threshold: 0.01
+            });
+          },
+
+          initInfiniteScroll() {
+            const loadMoreTrigger = document.getElementById('loadMoreTrigger');
+            if (loadMoreTrigger) {
+              const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                  if (entry.isIntersecting && this.hasMoreGames && !this.loadingMore) {
+                    this.loadMore();
+                  }
+                });
+              }, { threshold: 0.1 });
+              
+              observer.observe(loadMoreTrigger);
+            }
+          },
+
+          getCachedGames() {
             try {
-              const responses = await Promise.allSettled([
-                fetch("./json/games.json").then((r) => r.json()),
-                fetch(cdnUrl2 + "https://mathcenter.space/cdn/all").then((r) =>
-                  r.json()
-                ),
-              ]);
+              const cached = localStorage.getItem(CACHE_KEY);
+              if (!cached) return null;
+              
+              const { data, timestamp } = JSON.parse(cached);
+              const age = Date.now() - timestamp;
+              
+              // Return null if cache is expired
+              if (age > CACHE_DURATION) {
+                localStorage.removeItem(CACHE_KEY);
+                return null;
+              }
+              
+              return data;
+            } catch (e) {
+              console.error('Cache read error:', e);
+              return null;
+            }
+          },
 
-              this.allGames = responses
-                .filter((r) => r.status === "fulfilled")
-                .flatMap((r) => r.value);
+          setCachedGames(data) {
+            try {
+              const cache = {
+                data: data,
+                timestamp: Date.now()
+              };
+              localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+            } catch (e) {
+              console.error('Cache write error:', e);
+            }
+          },
 
-              console.log(`Loaded ${this.allGames.length} games`);
-              this.searchPlaceholder = `Search for ${this.allGames.length} games`;
-              this.applyFilters();
+          clearCache() {
+            localStorage.removeItem(CACHE_KEY);
+            this.usingCache = false;
+            this.loadGames();
+          },
+
+          async refreshGamesInBackground() {
+            try {
+              const freshData = await this.fetchGamesData();
+              if (freshData.length > 0) {
+                this.allGames = freshData;
+                this.applyFilters();
+                this.setCachedGames(freshData);
+                this.usingCache = false;
+              }
+            } catch (error) {
+              console.error('Background refresh failed:', error);
+            }
+          },
+
+          async loadGames() {
+            this.loading = true;
+            try {
+              const data = await this.fetchGamesData();
+              this.allGames = data;
+              this.filteredGames = data;
+              this.updateVisibleGames();
+              this.setCachedGames(data);
+              this.usingCache = false;
             } catch (error) {
               console.error("Error loading games:", error);
+              // If fetch fails and we have no data, show error state
+              if (this.allGames.length === 0) {
+                this.searchPlaceholder = "Failed to load games";
+              }
             } finally {
               this.loading = false;
             }
+          },
+
+          async fetchGamesData() {
+            // Use Promise.race for timeout protection
+            const timeout = new Promise((_, reject) => 
+              setTimeout(() => reject(new Error('Request timeout')), 10000)
+            );
+
+            const fetchPromise = Promise.allSettled([
+              fetch("./json/games.json").then((r) => r.json()),
+              fetch(cdnUrl2 + encodeURIComponent("https://mathcenter.space/cdn/all")).then((r) => r.json()),
+            ]);
+
+            const responses = await Promise.race([fetchPromise, timeout]);
+            
+            const games = responses
+              .filter((r) => r.status === "fulfilled")
+              .flatMap((r) => r.value);
+
+            // Add unique IDs for virtual scrolling
+            return games.map((game, index) => ({
+              ...game,
+              id: game.id || `game-${index}-${Date.now()}`
+            }));
+          },
+
+          debouncedSearch() {
+            this.isSearching = true;
+            clearTimeout(this.searchTimeout);
+            this.searchTimeout = setTimeout(() => {
+              this.applyFilters();
+              this.isSearching = false;
+            }, 300); // 300ms debounce
           },
 
           applyFilters() {
             let filtered = this.allGames;
 
             if (this.searchQuery) {
+              const query = this.searchQuery.toLowerCase();
               filtered = filtered.filter((game) =>
-                game.name.toLowerCase().includes(this.searchQuery.toLowerCase())
+                game.name.toLowerCase().includes(query)
               );
             }
 
@@ -485,16 +782,54 @@
               if (a.name === "Request a game") return -1;
               if (b.name === "Request a game") return 1;
               if (a.new && !b.new) return -1;
-              if (!a.new && b.new) return -1;
+              if (!a.new && b.new) return 1;
               if (a.top && !b.top) return -1;
               if (!a.top && b.top) return 1;
               return 0;
             });
 
             this.filteredGames = filtered;
-            this.searchPlaceholder = `Search for ${filtered.length} game${
-              filtered.length !== 1 ? "s" : ""
-            }`;
+            this.currentPage = 0;
+            this.updateVisibleGames();
+            this.searchPlaceholder = `Search for ${filtered.length} game${filtered.length !== 1 ? "s" : ""}`;
+          },
+
+          updateVisibleGames() {
+            const start = 0;
+            const end = (this.currentPage + 1) * GAMES_PER_PAGE;
+            this.visibleGames = this.filteredGames.slice(start, end);
+            this.hasMoreGames = end < this.filteredGames.length;
+            
+            // Observe new images after DOM update
+            this.$nextTick(() => {
+              this.observeImages();
+            });
+          },
+
+          observeImages() {
+            // Observe all images with data-src for lazy loading
+            const images = document.querySelectorAll('img[data-src]');
+            images.forEach(img => this.imageObserver.observe(img));
+          },
+
+          loadMore() {
+            if (this.loadingMore || !this.hasMoreGames) return;
+            this.loadingMore = true;
+            
+            // Simulate async for smooth UI
+            setTimeout(() => {
+              this.currentPage++;
+              const start = this.currentPage * GAMES_PER_PAGE;
+              const end = start + GAMES_PER_PAGE;
+              const newGames = this.filteredGames.slice(start, end);
+              this.visibleGames = [...this.visibleGames, ...newGames];
+              this.hasMoreGames = end < this.filteredGames.length;
+              this.loadingMore = false;
+              
+              this.$nextTick(() => {
+                this.observeImages();
+              });
+            }, 100);
           },
 
           getGameImage(game) {
