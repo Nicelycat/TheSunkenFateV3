@@ -52,32 +52,29 @@
         text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
       }
 
-      /* Panic Button Styles */
+      /* Panic Button Styles - Now in Navbar */
       .panic-button {
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 9999;
         background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
         color: white;
         border: none;
-        padding: 12px 20px;
+        padding: 8px 16px;
         border-radius: 50px;
         font-weight: 700;
-        font-size: 14px;
+        font-size: 13px;
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
         transition: all 0.3s ease;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         border: 2px solid rgba(255, 255, 255, 0.2);
+        white-space: nowrap;
       }
 
       .panic-button:hover {
-        transform: scale(1.05) translateY(-2px);
+        transform: scale(1.05);
         box-shadow: 0 6px 20px rgba(220, 38, 38, 0.6);
         background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       }
@@ -87,7 +84,7 @@
       }
 
       .panic-button i {
-        font-size: 16px;
+        font-size: 14px;
         animation: pulse 2s infinite;
       }
 
@@ -99,16 +96,14 @@
       /* Mobile adjustment for panic button */
       @media (max-width: 640px) {
         .panic-button {
-          top: 15px;
-          left: 15px;
-          padding: 10px 16px;
-          font-size: 12px;
+          padding: 8px 12px;
+          font-size: 11px;
         }
         .panic-button span {
           display: none;
         }
         .panic-button i {
-          font-size: 18px;
+          font-size: 16px;
           margin: 0;
         }
       }
@@ -355,18 +350,20 @@
   </head>
 
   <body class="bg-gray-900 text-white min-h-screen">
-    <!-- Panic Button - Top Left Corner -->
-    <button class="panic-button" onclick="window.location.href='https://clever.com'" title="Emergency Exit - Go to Clever">
-      <i class="fas fa-exclamation-triangle"></i>
-      <span>Panic</span>
-    </button>
-
     <!-- Navigation Bar -->
     <nav class="nav-glass fixed top-0 left-0 right-0 z-50 px-6 py-3">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
-        <div class="flex items-center gap-3">
-          <img src="media/logo.svg" alt="FATE V3" class="w-10 h-10" style="filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));">
-          <span class="text-xl font-bold text-white">FATE V3</span>
+        <div class="flex items-center gap-4">
+          <!-- Panic Button moved to navbar left side -->
+          <button class="panic-button" onclick="window.location.href='https://clever.com'" title="Emergency Exit - Go to Clever">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>Panic</span>
+          </button>
+          
+          <div class="flex items-center gap-3 border-l border-gray-700 pl-4">
+            <img src="media/logo.svg" alt="FATE V3" class="w-10 h-10" style="filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));">
+            <span class="text-xl font-bold text-white">FATE V3</span>
+          </div>
         </div>
         <div class="flex gap-6 items-center">
           <a href="index.html" class="nav-link text-blue-300 hover:text-white font-medium flex items-center gap-2">
