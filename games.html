@@ -13,19 +13,14 @@
       
       :root {
         --primary: #6366f1;
-        --primary-glow: rgba(99, 102, 241, 0.5);
         --secondary: #8b5cf6;
         --accent: #06b6d4;
-        --accent-glow: rgba(6, 182, 212, 0.4);
         --bg-deep: #0a0a0f;
-        --bg-surface: rgba(15, 15, 25, 0.7);
         --glass: rgba(255, 255, 255, 0.03);
         --glass-border: rgba(255, 255, 255, 0.08);
         --text: #f8fafc;
         --text-muted: #94a3b8;
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
+        --ban: #dc2626;
       }
 
       * {
@@ -39,6 +34,11 @@
         min-height: 100vh;
         overflow-x: hidden;
         padding-top: 90px;
+      }
+
+      body.banned {
+        overflow: hidden;
+        padding-top: 0;
       }
 
       /* Animated Background */
@@ -157,9 +157,7 @@
         display: flex;
         align-items: center;
         gap: 8px;
-        box-shadow: 
-          0 4px 20px rgba(220, 38, 38, 0.4),
-          0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -167,30 +165,9 @@
         overflow: hidden;
       }
 
-      .panic-button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-        transition: left 0.5s ease;
-      }
-
-      .panic-button:hover::before {
-        left: 100%;
-      }
-
       .panic-button:hover {
         transform: scale(1.05) translateY(-2px);
-        box-shadow: 
-          0 8px 30px rgba(220, 38, 38, 0.6),
-          0 0 0 1px rgba(255, 255, 255, 0.2) inset;
-      }
-
-      .panic-button:active {
-        transform: scale(0.98);
+        box-shadow: 0 8px 30px rgba(220, 38, 38, 0.6);
       }
 
       .panic-button i {
@@ -220,21 +197,6 @@
         text-shadow: 0 0 60px rgba(99, 102, 241, 0.3);
         letter-spacing: -0.02em;
         position: relative;
-      }
-
-      .header-title::after {
-        content: 'FATE V3.5 Games';
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #818cf8 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        filter: blur(30px);
-        opacity: 0.5;
-        z-index: -1;
       }
 
       .header-subtitle {
@@ -274,9 +236,19 @@
 
       .search-input-wrapper:focus-within {
         border-color: rgba(99, 102, 241, 0.5);
-        box-shadow: 
-          0 0 0 3px rgba(99, 102, 241, 0.1),
-          0 10px 40px rgba(99, 102, 241, 0.15);
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 10px 40px rgba(99, 102, 241, 0.15);
+      }
+
+      .search-input-wrapper.banned {
+        border-color: var(--ban);
+        box-shadow: 0 0 20px rgba(220, 38, 38, 0.4);
+        animation: shake 0.5s;
+      }
+
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-10px); }
+        75% { transform: translateX(10px); }
       }
 
       .search-input {
@@ -295,6 +267,10 @@
         color: var(--text-muted);
       }
 
+      .search-input.banned {
+        color: var(--ban);
+      }
+
       .search-actions {
         position: absolute;
         right: 8px;
@@ -310,7 +286,7 @@
         padding: 4px 10px;
         border-radius: 20px;
         background: rgba(16, 185, 129, 0.15);
-        color: var(--success);
+        color: #10b981;
         border: 1px solid rgba(16, 185, 129, 0.3);
         font-weight: 600;
         text-transform: uppercase;
@@ -324,6 +300,149 @@
 
       @keyframes spin {
         to { transform: rotate(360deg); }
+      }
+
+      /* Ban Warning */
+      .ban-warning {
+        position: fixed;
+        top: 100px;
+        left: 50%;
+        transform: translateX(-50%) translateY(-100px);
+        background: linear-gradient(135deg, rgba(220, 38, 38, 0.95), rgba(153, 27, 27, 0.95));
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 16px 24px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: white;
+        font-weight: 600;
+        z-index: 9999;
+        opacity: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 20px 40px rgba(220, 38, 38, 0.4);
+      }
+
+      .ban-warning.show {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      /* BAN SCREEN - FULL OVERLAY */
+      .ban-overlay {
+        position: fixed;
+        inset: 0;
+        background: #000;
+        z-index: 100000;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2rem;
+      }
+
+      .ban-overlay.active {
+        display: flex;
+        animation: banPulse 2s infinite;
+      }
+
+      @keyframes banPulse {
+        0%, 100% { background: #0a0a0f; }
+        50% { background: #1a0505; }
+      }
+
+      .ban-icon {
+        font-size: 80px;
+        color: var(--ban);
+        margin-bottom: 2rem;
+        animation: banShake 1s infinite;
+      }
+
+      @keyframes banShake {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+      }
+
+      .ban-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--ban);
+        margin-bottom: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+
+      .ban-message {
+        color: var(--text-muted);
+        font-size: 1.25rem;
+        max-width: 500px;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+      }
+
+      .ban-reason {
+        background: rgba(220, 38, 38, 0.2);
+        border: 1px solid rgba(220, 38, 38, 0.3);
+        border-radius: 12px;
+        padding: 16px 24px;
+        margin-bottom: 2rem;
+      }
+
+      .ban-reason-label {
+        font-size: 0.875rem;
+        color: var(--ban);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 8px;
+      }
+
+      .ban-reason-text {
+        color: white;
+        font-size: 1.1rem;
+      }
+
+      .ban-id {
+        font-family: monospace;
+        background: rgba(255,255,255,0.1);
+        padding: 8px 16px;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        font-size: 0.875rem;
+        color: var(--text-muted);
+      }
+
+      .ban-footer {
+        position: absolute;
+        bottom: 2rem;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+      }
+
+      /* Anti-tamper warning */
+      .tamper-warning {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(90deg, #dc2626, #991b1b);
+        color: white;
+        text-align: center;
+        padding: 8px;
+        font-size: 12px;
+        z-index: 100001;
+        display: none;
+      }
+
+      .tamper-warning.show {
+        display: block;
+        animation: slideDown 0.3s ease;
+      }
+
+      @keyframes slideDown {
+        from { transform: translateY(-100%); }
+        to { transform: translateY(0); }
       }
 
       /* Stats Bar */
@@ -415,9 +534,7 @@
       .game-card:hover {
         transform: translateY(-8px) scale(1.02);
         border-color: rgba(99, 102, 241, 0.3);
-        box-shadow: 
-          0 20px 40px rgba(0, 0, 0, 0.4),
-          0 0 40px rgba(99, 102, 241, 0.15);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 40px rgba(99, 102, 241, 0.15);
       }
 
       .game-card:hover::before {
@@ -609,12 +726,6 @@
         box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
       }
 
-      .load-more-btn:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-      }
-
       /* Game Popup */
       .game-popup-overlay {
         position: fixed;
@@ -644,9 +755,7 @@
         display: flex;
         flex-direction: column;
         border: 1px solid var(--glass-border);
-        box-shadow: 
-          0 25px 50px rgba(0, 0, 0, 0.5),
-          0 0 0 1px rgba(99, 102, 241, 0.1) inset;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.1) inset;
         animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       }
 
@@ -723,86 +832,6 @@
         border: none;
       }
 
-      /* Warning Modal */
-      .modal-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(10, 10, 15, 0.9);
-        backdrop-filter: blur(10px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10000;
-        padding: 20px;
-      }
-
-      .modal-content {
-        background: rgba(15, 15, 25, 0.95);
-        border: 1px solid var(--glass-border);
-        border-radius: 24px;
-        padding: 2rem;
-        max-width: 420px;
-        width: 100%;
-        text-align: center;
-        animation: modalPop 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      }
-
-      @keyframes modalPop {
-        from {
-          opacity: 0;
-          transform: scale(0.9);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      .modal-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 1.5rem;
-        font-size: 1.75rem;
-        color: var(--primary);
-        border: 1px solid rgba(99, 102, 241, 0.3);
-      }
-
-      .modal-title {
-        font-family: 'Space Grotesk', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 0.75rem;
-        color: var(--text);
-      }
-
-      .modal-text {
-        color: var(--text-muted);
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
-      }
-
-      .modal-btn {
-        padding: 12px 32px;
-        border-radius: 30px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        border: none;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
-      }
-
-      .modal-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
-      }
-
       /* Footer */
       .footer {
         margin-top: 4rem;
@@ -832,7 +861,7 @@
       }
 
       .heart {
-        color: var(--danger);
+        color: #ef4444;
         animation: heartbeat 1.5s infinite;
         display: inline-block;
       }
@@ -855,10 +884,6 @@
       ::-webkit-scrollbar-thumb {
         background: linear-gradient(180deg, var(--primary), var(--secondary));
         border-radius: 4px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, var(--secondary), var(--primary));
       }
 
       /* Mobile Responsive */
@@ -892,6 +917,10 @@
 
         .game-popup-overlay {
           padding: 0;
+        }
+
+        .ban-title {
+          font-size: 2rem;
         }
       }
 
@@ -936,7 +965,7 @@
         box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
       }
 
-      /* NEW: Quick Actions Bar */
+      /* Quick Actions Bar */
       .quick-actions {
         display: flex;
         justify-content: center;
@@ -967,7 +996,7 @@
         transform: translateY(-2px);
       }
 
-      /* NEW: Favorites Feature */
+      /* Favorites Feature */
       .favorite-btn {
         position: absolute;
         top: 12px;
@@ -990,26 +1019,17 @@
       .favorite-btn:hover {
         background: rgba(239, 68, 68, 0.2);
         border-color: rgba(239, 68, 68, 0.4);
-        color: var(--danger);
+        color: #ef4444;
         transform: scale(1.1);
       }
 
       .favorite-btn.active {
         background: rgba(239, 68, 68, 0.3);
         border-color: rgba(239, 68, 68, 0.5);
-        color: var(--danger);
+        color: #ef4444;
       }
 
-      .favorite-btn.active i {
-        animation: heartPulse 0.3s ease;
-      }
-
-      @keyframes heartPulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.3); }
-      }
-
-      /* NEW: Recently Played Section */
+      /* Recently Played Section */
       .recent-section {
         margin-bottom: 2rem;
         padding: 0 1rem;
@@ -1087,34 +1107,7 @@
         color: var(--text);
       }
 
-      /* NEW: Keyboard Shortcuts Modal */
-      .shortcuts-list {
-        display: grid;
-        gap: 0.75rem;
-        text-align: left;
-        margin: 1rem 0;
-      }
-
-      .shortcut-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem;
-        background: var(--glass);
-        border-radius: 8px;
-        font-size: 0.875rem;
-      }
-
-      .shortcut-key {
-        padding: 4px 8px;
-        background: rgba(99, 102, 241, 0.2);
-        border-radius: 6px;
-        font-family: monospace;
-        font-size: 0.75rem;
-        color: var(--primary);
-      }
-
-      /* NEW: Settings Panel */
+      /* Settings Panel */
       .settings-panel {
         position: fixed;
         top: 0;
@@ -1214,13 +1207,69 @@
         opacity: 1;
         pointer-events: auto;
       }
+
+      /* Cloak Alert */
+      .cloak-alert {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        background: var(--glass);
+        border: 1px solid var(--glass-border);
+        padding: 12px 24px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 10000;
+        transition: transform 0.3s ease;
+        backdrop-filter: blur(10px);
+      }
+
+      .cloak-alert.show {
+        transform: translateX(-50%) translateY(0);
+      }
     </style>
   </head>
 
-  <body x-data="gamesApp()" x-init="init()" @keydown.escape="closePopup()">
+  <body x-data="gamesApp()" x-init="init()" @keydown.escape="closePopup()" :class="{ 'banned': isBanned }">
+    
+    <!-- Tamper Warning -->
+    <div class="tamper-warning" :class="{ 'show': tamperDetected }">
+      <i class="fas fa-exclamation-triangle"></i> Tampering detected! Ban status reinforced.
+    </div>
+
     <!-- Ambient Background -->
     <div class="ambient-bg"></div>
     <div class="particles" id="particles"></div>
+
+    <!-- BAN OVERLAY - Shows when banned -->
+    <div class="ban-overlay" :class="{ 'active': isBanned }">
+      <div class="ban-icon">
+        <i class="fas fa-ban"></i>
+      </div>
+      <h1 class="ban-title">BANNED</h1>
+      <p class="ban-message">
+        You have been permanently banned from FATE V3.5 for violating our terms of service.
+      </p>
+      <div class="ban-reason">
+        <div class="ban-reason-label">Violation</div>
+        <div class="ban-reason-text" x-text="banReason || 'Inappropriate search query'"></div>
+      </div>
+      <div class="ban-id">
+        BAN ID: <span x-text="banId"></span>
+      </div>
+      <div class="ban-footer">
+        <p>This ban is tied to your browser fingerprint and cannot be evaded by clearing data.</p>
+        <p style="margin-top: 8px;">Contact support: fate-support@example.com</p>
+      </div>
+    </div>
+
+    <!-- Ban Warning Toast -->
+    <div class="ban-warning" :class="{ 'show': showBanWarning }">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>Inappropriate content detected! Strike <span x-text="banStrikes + '/3'"></span></span>
+    </div>
 
     <!-- Settings Overlay -->
     <div class="settings-overlay" :class="{ 'open': settingsOpen }" @click="settingsOpen = false"></div>
@@ -1229,37 +1278,52 @@
     <div class="settings-panel" :class="{ 'open': settingsOpen }">
       <div class="settings-header">
         <h3 class="settings-title"><i class="fas fa-cog mr-2"></i>Settings</h3>
-        <button class="popup-btn close" @click="settingsOpen = false">
+        <button class="nav-link" style="padding: 8px;" @click="settingsOpen = false">
           <i class="fas fa-times"></i>
         </button>
       </div>
       <div class="settings-content">
         <div class="setting-item">
           <label class="setting-label">Cloak Mode</label>
-          <p class="setting-desc">Change tab title and favicon to look like Google</p>
+          <p class="setting-desc">Change tab title and favicon to look like Google Classroom</p>
           <div class="toggle-switch" :class="{ 'active': cloakEnabled }" @click="toggleCloak()"></div>
         </div>
         
         <div class="setting-item">
           <label class="setting-label">Panic Key</label>
           <p class="setting-desc">Press this key to instantly redirect to Clever</p>
-          <button class="quick-action-btn w-full justify-center" @click="setPanicKey()">
+          <button class="quick-action-btn w-full justify-center text-sm" @click="setPanicKey()">
+            <i class="fas fa-keyboard"></i>
             <span x-text="panicKey ? `Current: ${panicKey.toUpperCase()}` : 'Set Panic Key'"></span>
           </button>
         </div>
         
         <div class="setting-item">
           <label class="setting-label">Clear Data</label>
-          <p class="setting-desc">Remove all cached games and favorites</p>
-          <button class="quick-action-btn w-full justify-center text-red-400 hover:text-red-300" @click="clearAllData()">
+          <p class="setting-desc">Remove all saved preferences</p>
+          <button class="quick-action-btn w-full justify-center text-sm text-red-400 hover:text-red-300" @click="clearAllData()">
             <i class="fas fa-trash-alt"></i> Clear All Data
+          </button>
+        </div>
+
+        <div class="setting-item" x-show="isBanned">
+          <label class="setting-label text-red-500">Ban Status</label>
+          <p class="setting-desc text-red-400">You are currently banned</p>
+          <button class="quick-action-btn w-full justify-center text-sm" @click="appealBan()">
+            <i class="fas fa-gavel"></i> Submit Appeal
           </button>
         </div>
       </div>
     </div>
 
+    <!-- Cloak Alert -->
+    <div class="cloak-alert" :class="{ 'show': cloakAlert }">
+      <i class="fas fa-eye-slash text-primary"></i>
+      <span>Cloak mode activated - Tab disguised as Google Classroom</span>
+    </div>
+
     <!-- Navigation Bar -->
-    <nav class="nav-glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-3">
+    <nav class="nav-glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-3" x-show="!isBanned">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-3">
           <button class="panic-button" @click="triggerPanic()" title="Emergency Exit - Go to Clever">
@@ -1278,13 +1342,13 @@
             <i class="fas fa-home"></i>
             <span class="hidden sm:inline ml-2">Home</span>
           </a>
-          <a href="https://fatev2.vercel.app/apps.html" class="nav-link">
-            <i class="fas fa-th-large"></i>
-            <span class="hidden sm:inline ml-2">Apps</span>
+          <a href="games.html" class="nav-link active">
+            <i class="fas fa-gamepad"></i>
+            <span class="hidden sm:inline ml-2">Games</span>
           </a>
           <a href="bookmarklets.html" class="nav-link">
             <i class="fas fa-bookmark"></i>
-            <span class="hidden sm:inline ml-2">Bookmarklets</span>
+            <span class="hidden sm:inline ml-2">Tools</span>
           </a>
           <a href="https://discord.gg/MfEnRxxxA" target="_blank" class="nav-link">
             <i class="fab fa-discord"></i>
@@ -1297,13 +1361,14 @@
       </div>
     </nav>
 
-    <!-- Header Section -->
-    <header class="header-section">
-      <h1 class="header-title">FATE V3.5 Games</h1>
-      <p class="header-subtitle">I actually updated the site lol</p>
-    </header>
+    <!-- Main Content - Hidden when banned -->
+    <main class="container mx-auto max-w-7xl px-4" x-show="!isBanned">
+      <!-- Header Section -->
+      <header class="header-section">
+        <h1 class="header-title">FATE V3.5 Games</h1>
+        <p class="header-subtitle">Enhanced Gaming Experience</p>
+      </header>
 
-    <main class="container mx-auto max-w-7xl px-4">
       <!-- Quick Actions -->
       <div class="quick-actions">
         <button class="quick-action-btn" @click="showFavorites = !showFavorites" :class="{ 'text-primary': showFavorites }">
@@ -1334,15 +1399,17 @@
         </div>
       </div>
 
-      <!-- Search Section -->
+      <!-- Search Section with Profanity Filter -->
       <div class="search-container">
-        <div class="search-input-wrapper">
+        <div class="search-input-wrapper" :class="{ 'banned': searchBanned }">
           <input
             type="text"
             x-model="searchQuery"
             @input="debouncedSearch()"
             :placeholder="searchPlaceholder"
             class="search-input"
+            :class="{ 'banned': searchBanned }"
+            :disabled="isBanned"
           />
           <div class="search-actions">
             <span x-show="usingCache" class="cache-badge" x-transition>CACHED</span>
@@ -1495,7 +1562,7 @@
     <!-- Game Popup -->
     <div
       class="game-popup-overlay"
-      x-show="popupOpen"
+      x-show="popupOpen && !isBanned"
       @click.self="closePopup()"
       x-transition:enter="transition ease-out duration-300"
       x-transition:enter-start="opacity-0"
@@ -1530,7 +1597,7 @@
     <!-- Warning Modal -->
     <div
       class="modal-overlay"
-      x-show="showWarningModal"
+      x-show="showWarningModal && !isBanned"
       x-transition:enter="transition ease-out duration-300"
       x-transition:enter-start="opacity-0"
       x-transition:enter-end="opacity-100"
@@ -1555,7 +1622,7 @@
     <!-- Shortcuts Modal -->
     <div
       class="modal-overlay"
-      x-show="showShortcuts"
+      x-show="showShortcuts && !isBanned"
       @click.self="showShortcuts = false"
       x-transition:enter="transition ease-out duration-300"
       x-transition:enter-start="opacity-0"
@@ -1601,7 +1668,7 @@
     </div>
 
     <!-- Footer -->
-    <footer class="footer">
+    <footer class="footer" x-show="!isBanned">
       <div class="visitor-counter">
         <i class="fas fa-users"></i>
         <span>Total Visitors:</span>
@@ -1639,6 +1706,25 @@
       const RECENT_KEY = 'fate_recent_v35';
       const CLOAK_KEY = 'fate_cloak_v35';
       const PANIC_KEY = 'fate_panic_key_v35';
+      
+      // Ban system keys - multiple storage methods
+      const BAN_STATUS_KEY = 'fate_banned_v35';
+      const BAN_REASON_KEY = 'fate_ban_reason_v35';
+      const BAN_STRIKES_KEY = 'fate_ban_strikes_v35';
+      const BAN_TIME_KEY = 'fate_ban_time_v35';
+      const BAN_ID_KEY = 'fate_ban_id_v35';
+      const BAN_BACKUP_KEY = 'fate_ban_backup_v35';
+      const BAN_SESSION_KEY = 'fate_ban_session_v35';
+
+      // Profanity filter list
+      const PROFANITY_LIST = [
+        'fuck', 'shit', 'bitch', 'asshole', 'damn', 'crap', 'hell', 'piss', 'dick', 'cock', 
+        'pussy', 'vagina', 'penis', 'sex', 'porn', 'xxx', 'nude', 'naked', 'boobs', 'tits',
+        'whore', 'slut', 'bastard', 'retard', 'cunt', 'nigger', 'fag', 'gay', 'lesbian',
+        'kill', 'die', 'death', 'murder', 'suicide', 'weed', 'drugs', 'cocaine', 'heroin',
+        'sexy', 'hot', 'milf', 'blowjob', 'handjob', 'cum', 'jizz', 'orgasm', 'masturbate',
+        'rape', 'molest', 'pedo', 'child', 'kids', 'young', 'teen', 'underage'
+      ];
 
       function gamesApp() {
         return {
@@ -1654,6 +1740,9 @@
           showWarningModal: true,
           showShortcuts: false,
           settingsOpen: false,
+          cloakEnabled: false,
+          cloakAlert: false,
+          panicKey: null,
           usingCache: false,
           isSearching: false,
           searchTimeout: null,
@@ -1663,11 +1752,24 @@
           showFavorites: false,
           favorites: [],
           recentGames: [],
-          cloakEnabled: false,
-          panicKey: null,
           imageObserver: null,
+          
+          // Ban system
+          isBanned: false,
+          banReason: '',
+          banStrikes: 0,
+          showBanWarning: false,
+          searchBanned: false,
+          banId: '',
+          tamperDetected: false,
 
           async init() {
+            // Initialize anti-tamper first
+            this.initAntiTamper();
+            
+            // Check ban status with multiple methods
+            this.checkBanStatus();
+            
             this.showWarningModal =
               !window.location.search.includes("nomodal") &&
               !localStorage.getItem("warningModalShown");
@@ -1688,6 +1790,8 @@
 
             this.initImageObserver();
             
+            if (this.isBanned) return;
+            
             const cached = this.getCachedGames();
             if (cached) {
               this.allGames = cached;
@@ -1700,13 +1804,184 @@
             }
 
             this.initInfiniteScroll();
-            
-            // Watch for favorites toggle
-            this.$watch('showFavorites', () => {
-              this.applyFilters();
-            });
           },
 
+          // ANTI-TAMPER SYSTEM
+          initAntiTamper() {
+            // Monitor localStorage changes
+            const originalSetItem = localStorage.setItem;
+            const originalRemoveItem = localStorage.removeItem;
+            const self = this;
+            
+            localStorage.setItem = function(key, value) {
+              // Check if trying to unban
+              if (key === BAN_STATUS_KEY || key === BAN_STRIKES_KEY || key === BAN_ID_KEY) {
+                if (self.isBanned && !self.allowBanUpdate) {
+                  self.detectTamper();
+                  return;
+                }
+              }
+              originalSetItem.apply(this, arguments);
+              self.syncBanBackup();
+            };
+            
+            localStorage.removeItem = function(key) {
+              if (key.includes('ban') && self.isBanned && !self.allowBanUpdate) {
+                self.detectTamper();
+                return;
+              }
+              originalRemoveItem.apply(this, arguments);
+            };
+            
+            // Periodically verify ban status
+            setInterval(() => {
+              if (this.isBanned) {
+                this.verifyBanIntegrity();
+              }
+            }, 5000);
+          },
+
+          detectTamper() {
+            this.tamperDetected = true;
+            // Re-ban with new ID
+            this.permanentBan('Attempted to evade ban by clearing data');
+            setTimeout(() => {
+              this.tamperDetected = false;
+            }, 5000);
+          },
+
+          verifyBanIntegrity() {
+            // Check if ban data was tampered with
+            const banStatus = localStorage.getItem(BAN_STATUS_KEY);
+            const banId = localStorage.getItem(BAN_ID_KEY);
+            const backupData = sessionStorage.getItem(BAN_BACKUP_KEY);
+            
+            if (this.isBanned && (!banStatus || banStatus !== 'true')) {
+              this.detectTamper();
+              return;
+            }
+            
+            // Verify backup matches
+            if (backupData) {
+              const backup = JSON.parse(backupData);
+              if (backup.id !== this.banId) {
+                this.detectTamper();
+              }
+            }
+          },
+
+          syncBanBackup() {
+            if (this.isBanned) {
+              // Store backup in sessionStorage (cleared when tab closes)
+              sessionStorage.setItem(BAN_SESSION_KEY, 'true');
+              // Store encrypted backup
+              const backup = {
+                id: this.banId,
+                reason: this.banReason,
+                time: Date.now()
+              };
+              sessionStorage.setItem(BAN_BACKUP_KEY, JSON.stringify(backup));
+            }
+          },
+
+          // BAN SYSTEM FUNCTIONS
+          checkBanStatus() {
+            // Check multiple storage locations
+            const banStatus = localStorage.getItem(BAN_STATUS_KEY);
+            const sessionBan = sessionStorage.getItem(BAN_SESSION_KEY);
+            const backupBan = sessionStorage.getItem(BAN_BACKUP_KEY);
+            
+            // If banned in any storage, enforce ban
+            if (banStatus === 'true' || sessionBan === 'true' || backupBan) {
+              this.isBanned = true;
+              this.banReason = localStorage.getItem(BAN_REASON_KEY) || 'Violation of terms';
+              this.banId = localStorage.getItem(BAN_ID_KEY) || this.generateBanId();
+              this.banStrikes = 3; // Max strikes if already banned
+              
+              // Restore ban data if missing
+              if (!banStatus) {
+                this.restoreBanData();
+              }
+            }
+          },
+
+          generateBanId() {
+            return 'BAN-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+          },
+
+          restoreBanData() {
+            // Restore from backup
+            localStorage.setItem(BAN_STATUS_KEY, 'true');
+            localStorage.setItem(BAN_REASON_KEY, this.banReason);
+            localStorage.setItem(BAN_ID_KEY, this.banId);
+            localStorage.setItem(BAN_STRIKES_KEY, '3');
+            localStorage.setItem(BAN_TIME_KEY, '0');
+          },
+
+          checkProfanity(text) {
+            const lowerText = text.toLowerCase();
+            return PROFANITY_LIST.some(word => lowerText.includes(word));
+          },
+
+          handleProfanity() {
+            this.banStrikes = parseInt(localStorage.getItem(BAN_STRIKES_KEY) || '0') + 1;
+            localStorage.setItem(BAN_STRIKES_KEY, this.banStrikes);
+            
+            // Visual feedback
+            this.searchBanned = true;
+            this.showBanWarning = true;
+            
+            setTimeout(() => {
+              this.searchBanned = false;
+            }, 500);
+            
+            setTimeout(() => {
+              this.showBanWarning = false;
+            }, 3000);
+            
+            // Ban on 3 strikes
+            if (this.banStrikes >= 3) {
+              this.permanentBan('Repeated inappropriate search queries');
+            }
+          },
+
+          permanentBan(reason) {
+            this.allowBanUpdate = true; // Allow the ban to be set
+            
+            this.isBanned = true;
+            this.banReason = reason;
+            this.banId = this.generateBanId();
+            
+            // Store in multiple locations
+            localStorage.setItem(BAN_STATUS_KEY, 'true');
+            localStorage.setItem(BAN_REASON_KEY, reason);
+            localStorage.setItem(BAN_ID_KEY, this.banId);
+            localStorage.setItem(BAN_STRIKES_KEY, '3');
+            localStorage.setItem(BAN_TIME_KEY, '0');
+            
+            // Session backup
+            sessionStorage.setItem(BAN_SESSION_KEY, 'true');
+            sessionStorage.setItem(BAN_BACKUP_KEY, JSON.stringify({
+              id: this.banId,
+              reason: reason,
+              time: Date.now()
+            }));
+            
+            this.allowBanUpdate = false;
+            
+            // Clear search
+            this.searchQuery = '';
+            this.filteredGames = [];
+          },
+
+          appealBan() {
+            const appeal = prompt('Enter your appeal reason:');
+            if (appeal) {
+              alert(`Appeal submitted for Ban ID: ${this.banId}\n\nReason: ${appeal}\n\nContact: fate-support@example.com`);
+            }
+          },
+
+          // REST OF ORIGINAL FUNCTIONS
           initImageObserver() {
             this.imageObserver = new IntersectionObserver((entries) => {
               entries.forEach(entry => {
@@ -1735,7 +2010,7 @@
             if (loadMoreTrigger) {
               const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                  if (entry.isIntersecting && this.hasMoreGames && !this.loadingMore && !this.showFavorites) {
+                  if (entry.isIntersecting && this.hasMoreGames && !this.loadingMore) {
                     this.loadMore();
                   }
                 });
@@ -1743,43 +2018,6 @@
               
               observer.observe(loadMoreTrigger);
             }
-          },
-
-          setupKeyboardShortcuts() {
-            document.addEventListener('keydown', (e) => {
-              if (e.target.tagName === 'INPUT') return;
-              
-              switch(e.key) {
-                case '/':
-                  e.preventDefault();
-                  document.querySelector('.search-input').focus();
-                  break;
-                case 'Escape':
-                  if (this.popupOpen) this.closePopup();
-                  if (this.settingsOpen) this.settingsOpen = false;
-                  if (this.showShortcuts) this.showShortcuts = false;
-                  break;
-                case 'f':
-                case 'F':
-                  if (this.popupOpen) this.fullscreenPopup();
-                  break;
-                case 'r':
-                case 'R':
-                  this.randomGame();
-                  break;
-                case 'l':
-                case 'L':
-                  this.showFavorites = !this.showFavorites;
-                  break;
-                case '?':
-                  this.showShortcuts = true;
-                  break;
-              }
-              
-              if (this.panicKey && e.key.toLowerCase() === this.panicKey.toLowerCase()) {
-                this.triggerPanic();
-              }
-            });
           },
 
           getCachedGames() {
@@ -1880,6 +2118,13 @@
           },
 
           debouncedSearch() {
+            // Check for profanity FIRST
+            if (this.checkProfanity(this.searchQuery)) {
+              this.handleProfanity();
+              this.searchQuery = '';
+              return;
+            }
+            
             this.isSearching = true;
             clearTimeout(this.searchTimeout);
             this.searchTimeout = setTimeout(() => {
@@ -1889,19 +2134,14 @@
           },
 
           applyFilters() {
+            if (this.isBanned) return;
+            
             let filtered = this.allGames;
 
-            // Favorites filter
-            if (this.showFavorites) {
-              filtered = filtered.filter(game => this.isFavorite(game));
-            }
-
-            // Category filter
-            if (this.activeFilter !== 'all' && !this.showFavorites) {
+            if (this.activeFilter !== 'all') {
               filtered = filtered.filter(game => game[this.activeFilter] === true);
             }
 
-            // Search filter
             if (this.searchQuery) {
               const query = this.searchQuery.toLowerCase();
               filtered = filtered.filter((game) =>
@@ -1909,16 +2149,9 @@
               );
             }
 
-            // Sort
             filtered = [...filtered].sort((a, b) => {
               if (a.name === "Request a game") return -1;
               if (b.name === "Request a game") return 1;
-              if (this.showFavorites) {
-                // Sort favorites by recently added
-                const aFav = this.favorites.indexOf(a.id);
-                const bFav = this.favorites.indexOf(b.id);
-                return aFav - bFav;
-              }
               if (a.new && !b.new) return -1;
               if (!a.new && b.new) return 1;
               if (a.top && !b.top) return -1;
@@ -1934,9 +2167,9 @@
 
           updateVisibleGames() {
             const start = 0;
-            const end = this.showFavorites ? this.filteredGames.length : (this.currentPage + 1) * GAMES_PER_PAGE;
+            const end = (this.currentPage + 1) * GAMES_PER_PAGE;
             this.visibleGames = this.filteredGames.slice(start, end);
-            this.hasMoreGames = !this.showFavorites && end < this.filteredGames.length;
+            this.hasMoreGames = end < this.filteredGames.length;
             
             this.$nextTick(() => {
               this.observeImages();
@@ -1980,11 +2213,10 @@
           },
 
           async openGame(game) {
+            if (this.isBanned) return;
+            
             this.currentGame = game;
             this.popupOpen = true;
-            
-            // Add to recent
-            this.addToRecent(game);
 
             await this.$nextTick();
             const iframe = this.$refs.gameFrame;
@@ -2004,21 +2236,6 @@
             } else {
               iframe.src = game.url;
             }
-          },
-
-          addToRecent(game) {
-            // Remove if already exists
-            this.recentGames = this.recentGames.filter(g => g.id !== game.id);
-            // Add to front
-            this.recentGames.unshift(game);
-            // Keep only last 10
-            this.recentGames = this.recentGames.slice(0, 10);
-            localStorage.setItem(RECENT_KEY, JSON.stringify(this.recentGames));
-          },
-
-          clearRecent() {
-            this.recentGames = [];
-            localStorage.removeItem(RECENT_KEY);
           },
 
           closePopup() {
@@ -2044,7 +2261,43 @@
             }
           },
 
-          // Favorites
+          setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+              if (this.isBanned) return;
+              
+              if (e.target.tagName === 'INPUT') {
+                if (e.key === 'Enter' && this.checkProfanity(e.target.value)) {
+                  this.handleProfanity();
+                  e.target.value = '';
+                  e.preventDefault();
+                  return;
+                }
+                return;
+              }
+              
+              if (e.key === 'Escape') {
+                this.closePopup();
+                this.settingsOpen = false;
+                this.showShortcuts = false;
+              }
+              if (e.key === 'f' || e.key === 'F') {
+                if (this.popupOpen) this.fullscreenPopup();
+              }
+              if (e.key === 'r' || e.key === 'R') {
+                this.randomGame();
+              }
+              if (e.key === 'l' || e.key === 'L') {
+                this.showFavorites = !this.showFavorites;
+              }
+              if (e.key === '?') {
+                this.showShortcuts = true;
+              }
+              if (this.panicKey && e.key.toLowerCase() === this.panicKey.toLowerCase()) {
+                this.triggerPanic();
+              }
+            });
+          },
+
           isFavorite(game) {
             return this.favorites.includes(game.id);
           },
@@ -2068,23 +2321,24 @@
             this.openGame(random);
           },
 
-          // Cloak/Stealth mode
           toggleCloak() {
             this.cloakEnabled = !this.cloakEnabled;
             localStorage.setItem(CLOAK_KEY, this.cloakEnabled);
             if (this.cloakEnabled) {
               this.applyCloak();
+              this.cloakAlert = true;
+              setTimeout(() => this.cloakAlert = false, 3000);
             } else {
               this.removeCloak();
             }
           },
 
           applyCloak() {
-            document.title = "Google";
+            document.title = "Google Classroom";
             const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
             link.type = 'image/x-icon';
             link.rel = 'shortcut icon';
-            link.href = 'https://www.google.com/favicon.ico';
+            link.href = 'https://www.gstatic.com/classroom/favicon.png';
             document.getElementsByTagName('head')[0].appendChild(link);
           },
 
@@ -2094,7 +2348,6 @@
             if (link) link.href = 'media/logo.svg';
           },
 
-          // Panic
           setPanicKey() {
             const key = prompt("Press the key you want to set as panic key (or Cancel to remove):");
             if (key === null) {
@@ -2114,6 +2367,7 @@
 
           clearAllData() {
             if (confirm("Are you sure you want to clear all data? This includes favorites, recent games, and cache.")) {
+              // Don't clear ban data!
               localStorage.removeItem(CACHE_KEY);
               localStorage.removeItem(FAVORITES_KEY);
               localStorage.removeItem(RECENT_KEY);
@@ -2121,6 +2375,18 @@
               localStorage.removeItem(PANIC_KEY);
               location.reload();
             }
+          },
+
+          clearRecent() {
+            this.recentGames = [];
+            localStorage.removeItem(RECENT_KEY);
+          },
+
+          addToRecent(game) {
+            this.recentGames = this.recentGames.filter(g => g.id !== game.id);
+            this.recentGames.unshift(game);
+            this.recentGames = this.recentGames.slice(0, 10);
+            localStorage.setItem(RECENT_KEY, JSON.stringify(this.recentGames));
           }
         };
       }
