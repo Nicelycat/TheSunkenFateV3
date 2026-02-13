@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FATE V3 - Games</title>
+    <title>FATE V3.5 - Games</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="shortcut icon" href="media/logo.svg" type="image/x-icon" />
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
@@ -223,7 +223,7 @@
       }
 
       .header-title::after {
-        content: 'FATE V3 Games';
+        content: 'FATE V3.5 Games';
         position: absolute;
         left: 0;
         top: 0;
@@ -935,26 +935,341 @@
         color: white;
         box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
       }
+
+      /* NEW: Quick Actions Bar */
+      .quick-actions {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+      }
+
+      .quick-action-btn {
+        padding: 10px 20px;
+        border-radius: 12px;
+        background: var(--glass);
+        border: 1px solid var(--glass-border);
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .quick-action-btn:hover {
+        background: rgba(99, 102, 241, 0.1);
+        border-color: rgba(99, 102, 241, 0.3);
+        color: var(--text);
+        transform: translateY(-2px);
+      }
+
+      /* NEW: Favorites Feature */
+      .favorite-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-muted);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 3;
+        backdrop-filter: blur(10px);
+      }
+
+      .favorite-btn:hover {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.4);
+        color: var(--danger);
+        transform: scale(1.1);
+      }
+
+      .favorite-btn.active {
+        background: rgba(239, 68, 68, 0.3);
+        border-color: rgba(239, 68, 68, 0.5);
+        color: var(--danger);
+      }
+
+      .favorite-btn.active i {
+        animation: heartPulse 0.3s ease;
+      }
+
+      @keyframes heartPulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.3); }
+      }
+
+      /* NEW: Recently Played Section */
+      .recent-section {
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+      }
+
+      .recent-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .recent-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .recent-grid {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--primary) var(--bg-deep);
+      }
+
+      .recent-grid::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .recent-grid::-webkit-scrollbar-track {
+        background: var(--bg-deep);
+        border-radius: 3px;
+      }
+
+      .recent-grid::-webkit-scrollbar-thumb {
+        background: var(--primary);
+        border-radius: 3px;
+      }
+
+      .recent-card {
+        flex-shrink: 0;
+        width: 120px;
+        background: var(--glass);
+        border: 1px solid var(--glass-border);
+        border-radius: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .recent-card:hover {
+        transform: translateY(-4px);
+        border-color: rgba(99, 102, 241, 0.3);
+      }
+
+      .recent-card img {
+        width: 100%;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+
+      .recent-card .recent-name {
+        padding: 0.5rem;
+        font-size: 0.75rem;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--text);
+      }
+
+      /* NEW: Keyboard Shortcuts Modal */
+      .shortcuts-list {
+        display: grid;
+        gap: 0.75rem;
+        text-align: left;
+        margin: 1rem 0;
+      }
+
+      .shortcut-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem;
+        background: var(--glass);
+        border-radius: 8px;
+        font-size: 0.875rem;
+      }
+
+      .shortcut-key {
+        padding: 4px 8px;
+        background: rgba(99, 102, 241, 0.2);
+        border-radius: 6px;
+        font-family: monospace;
+        font-size: 0.75rem;
+        color: var(--primary);
+      }
+
+      /* NEW: Settings Panel */
+      .settings-panel {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 100%;
+        max-width: 400px;
+        height: 100vh;
+        background: rgba(15, 15, 25, 0.98);
+        backdrop-filter: blur(20px);
+        border-left: 1px solid var(--glass-border);
+        z-index: 9999;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+      }
+
+      .settings-panel.open {
+        right: 0;
+      }
+
+      .settings-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--glass-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .settings-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 600;
+      }
+
+      .settings-content {
+        padding: 1.5rem;
+      }
+
+      .setting-item {
+        margin-bottom: 1.5rem;
+      }
+
+      .setting-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text);
+      }
+
+      .setting-desc {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+      }
+
+      .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 26px;
+        background: var(--glass);
+        border-radius: 13px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+        border: 1px solid var(--glass-border);
+      }
+
+      .toggle-switch.active {
+        background: var(--primary);
+      }
+
+      .toggle-switch::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        transition: transform 0.3s ease;
+      }
+
+      .toggle-switch.active::after {
+        transform: translateX(24px);
+      }
+
+      .settings-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 9998;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease;
+      }
+
+      .settings-overlay.open {
+        opacity: 1;
+        pointer-events: auto;
+      }
     </style>
   </head>
 
-  <body x-data="gamesApp()" x-init="init()">
+  <body x-data="gamesApp()" x-init="init()" @keydown.escape="closePopup()">
     <!-- Ambient Background -->
     <div class="ambient-bg"></div>
     <div class="particles" id="particles"></div>
+
+    <!-- Settings Overlay -->
+    <div class="settings-overlay" :class="{ 'open': settingsOpen }" @click="settingsOpen = false"></div>
+    
+    <!-- Settings Panel -->
+    <div class="settings-panel" :class="{ 'open': settingsOpen }">
+      <div class="settings-header">
+        <h3 class="settings-title"><i class="fas fa-cog mr-2"></i>Settings</h3>
+        <button class="popup-btn close" @click="settingsOpen = false">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="settings-content">
+        <div class="setting-item">
+          <label class="setting-label">Cloak Mode</label>
+          <p class="setting-desc">Change tab title and favicon to look like Google</p>
+          <div class="toggle-switch" :class="{ 'active': cloakEnabled }" @click="toggleCloak()"></div>
+        </div>
+        
+        <div class="setting-item">
+          <label class="setting-label">Panic Key</label>
+          <p class="setting-desc">Press this key to instantly redirect to Clever</p>
+          <button class="quick-action-btn w-full justify-center" @click="setPanicKey()">
+            <span x-text="panicKey ? `Current: ${panicKey.toUpperCase()}` : 'Set Panic Key'"></span>
+          </button>
+        </div>
+        
+        <div class="setting-item">
+          <label class="setting-label">Clear Data</label>
+          <p class="setting-desc">Remove all cached games and favorites</p>
+          <button class="quick-action-btn w-full justify-center text-red-400 hover:text-red-300" @click="clearAllData()">
+            <i class="fas fa-trash-alt"></i> Clear All Data
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- Navigation Bar -->
     <nav class="nav-glass fixed top-0 left-0 right-0 z-50 px-4 sm:px-6 py-3">
       <div class="max-w-7xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-3">
-          <button class="panic-button" onclick="window.location.href='https://clever.com'" title="Emergency Exit - Go to Clever">
+          <button class="panic-button" @click="triggerPanic()" title="Emergency Exit - Go to Clever">
             <i class="fas fa-exclamation-triangle"></i>
             <span>Panic</span>
           </button>
           
           <div class="flex items-center gap-3 border-l border-gray-700/50 pl-4">
-            <img src="media/logo.svg" alt="FATE V3" class="w-10 h-10" style="filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.5));">
-            <span class="text-xl font-bold hidden sm:block" style="font-family: 'Space Grotesk', sans-serif;">FATE V3</span>
+            <img src="media/logo.svg" alt="FATE V3.5" class="w-10 h-10" style="filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.5));">
+            <span class="text-xl font-bold hidden sm:block" style="font-family: 'Space Grotesk', sans-serif;">FATE V3.5</span>
           </div>
         </div>
         
@@ -967,21 +1282,58 @@
             <i class="fas fa-th-large"></i>
             <span class="hidden sm:inline ml-2">Apps</span>
           </a>
+          <a href="bookmarklets.html" class="nav-link">
+            <i class="fas fa-bookmark"></i>
+            <span class="hidden sm:inline ml-2">Bookmarklets</span>
+          </a>
           <a href="https://discord.gg/MfEnRxxxA" target="_blank" class="nav-link">
             <i class="fab fa-discord"></i>
             <span class="hidden sm:inline ml-2">Discord</span>
           </a>
+          <button class="nav-link" @click="settingsOpen = true" title="Settings">
+            <i class="fas fa-cog"></i>
+          </button>
         </div>
       </div>
     </nav>
 
     <!-- Header Section -->
     <header class="header-section">
-      <h1 class="header-title">FATE V3 Games</h1>
-      <p class="header-subtitle">FATE V3 better than ever</p>
+      <h1 class="header-title">FATE V3.5 Games</h1>
+      <p class="header-subtitle">I actually updated the site lol</p>
     </header>
 
     <main class="container mx-auto max-w-7xl px-4">
+      <!-- Quick Actions -->
+      <div class="quick-actions">
+        <button class="quick-action-btn" @click="showFavorites = !showFavorites" :class="{ 'text-primary': showFavorites }">
+          <i class="fas" :class="showFavorites ? 'fa-heart text-red-500' : 'fa-heart'"></i>
+          <span x-text="showFavorites ? 'Show All' : 'Favorites'"></span>
+        </button>
+        <button class="quick-action-btn" @click="randomGame()">
+          <i class="fas fa-dice"></i> Random Game
+        </button>
+        <button class="quick-action-btn" @click="showShortcuts = true">
+          <i class="fas fa-keyboard"></i> Shortcuts
+        </button>
+      </div>
+
+      <!-- Recently Played -->
+      <div class="recent-section" x-show="recentGames.length > 0 && !showFavorites && !searchQuery && activeFilter === 'all'" x-transition>
+        <div class="recent-header">
+          <h3 class="recent-title"><i class="fas fa-history text-primary"></i> Recently Played</h3>
+          <button class="text-sm text-muted hover:text-white transition-colors" @click="clearRecent()">Clear</button>
+        </div>
+        <div class="recent-grid">
+          <template x-for="game in recentGames.slice(0, 10)" :key="game.id">
+            <div class="recent-card" @click="openGame(game)">
+              <img :src="getGameImage(game)" :alt="game.name">
+              <div class="recent-name" x-text="game.name"></div>
+            </div>
+          </template>
+        </div>
+      </div>
+
       <!-- Search Section -->
       <div class="search-container">
         <div class="search-input-wrapper">
@@ -1001,7 +1353,7 @@
       </div>
 
       <!-- Category Pills -->
-      <div class="category-pills">
+      <div class="category-pills" x-show="!showFavorites">
         <button 
           class="category-pill" 
           :class="{ 'active': activeFilter === 'all' }"
@@ -1037,6 +1389,10 @@
         <div class="stat-item">
           <i class="fas fa-gamepad"></i>
           <span x-text="filteredGames.length + ' games available'"></span>
+        </div>
+        <div class="stat-item" x-show="favorites.length > 0">
+          <i class="fas fa-heart text-red-500"></i>
+          <span x-text="favorites.length + ' favorites'"></span>
         </div>
         <button @click="clearCache()" class="refresh-btn" x-show="usingCache" x-transition>
           <i class="fas fa-sync-alt"></i> Refresh Data
@@ -1091,6 +1447,15 @@
                 </div>
               </div>
               
+              <button 
+                class="favorite-btn" 
+                :class="{ 'active': isFavorite(game) }"
+                @click.stop="toggleFavorite(game)"
+                title="Add to favorites"
+              >
+                <i class="fas" :class="isFavorite(game) ? 'fa-heart' : 'fa-heart'"></i>
+              </button>
+              
               <div class="badges-container">
                 <span x-show="game.top" class="badge badge-hot">
                   <i class="fas fa-fire"></i> HOT
@@ -1115,7 +1480,7 @@
       </div>
 
       <!-- Load More -->
-      <div x-show="hasMoreGames" class="load-more-container" id="loadMoreTrigger">
+      <div x-show="hasMoreGames && !showFavorites" class="load-more-container" id="loadMoreTrigger">
         <button 
           @click="loadMore()" 
           class="load-more-btn"
@@ -1141,13 +1506,17 @@
     >
       <div class="game-popup-container">
         <div class="game-popup-header">
-          <div style="width: 94px;"></div>
+          <div class="game-popup-actions">
+            <button class="popup-btn" @click="toggleFavorite(currentGame)" :class="{ 'text-red-500': isFavorite(currentGame) }" title="Toggle Favorite">
+              <i class="fas" :class="isFavorite(currentGame) ? 'fa-heart' : 'fa-heart'"></i>
+            </button>
+          </div>
           <div class="game-popup-title" x-text="currentGame?.name || 'Loading...'"></div>
           <div class="game-popup-actions">
-            <button class="popup-btn" @click="fullscreenPopup()" title="Fullscreen">
+            <button class="popup-btn" @click="fullscreenPopup()" title="Fullscreen (F)">
               <i class="fas fa-expand"></i>
             </button>
-            <button class="popup-btn close" @click="closePopup()" title="Close">
+            <button class="popup-btn close" @click="closePopup()" title="Close (ESC)">
               <i class="fas fa-times"></i>
             </button>
           </div>
@@ -1170,16 +1539,64 @@
         <div class="modal-icon">
           <i class="fas fa-bell"></i>
         </div>
-        <h2 class="modal-title">Welcome to FATE V3</h2>
+        <h2 class="modal-title">Welcome to FATE V3.5</h2>
         <p class="modal-text">
-          enjoy the games. 
+          Enhanced gaming with favorites, recently played, and keyboard shortcuts. Press <kbd class="shortcut-key">?</kbd> anytime for help.
         </p>
         <button
           @click="showWarningModal = false; localStorage.setItem('warningModalShown', 'true');"
           class="modal-btn"
         >
-          alright
+          Start Gaming
         </button>
+      </div>
+    </div>
+
+    <!-- Shortcuts Modal -->
+    <div
+      class="modal-overlay"
+      x-show="showShortcuts"
+      @click.self="showShortcuts = false"
+      x-transition:enter="transition ease-out duration-300"
+      x-transition:enter-start="opacity-0"
+      x-transition:enter-end="opacity-100"
+    >
+      <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-icon">
+          <i class="fas fa-keyboard"></i>
+        </div>
+        <h2 class="modal-title">Keyboard Shortcuts</h2>
+        <div class="shortcuts-list">
+          <div class="shortcut-item">
+            <span>Search games</span>
+            <span class="shortcut-key">/</span>
+          </div>
+          <div class="shortcut-item">
+            <span>Close game/Reset</span>
+            <span class="shortcut-key">ESC</span>
+          </div>
+          <div class="shortcut-item">
+            <span>Fullscreen game</span>
+            <span class="shortcut-key">F</span>
+          </div>
+          <div class="shortcut-item">
+            <span>Random game</span>
+            <span class="shortcut-key">R</span>
+          </div>
+          <div class="shortcut-item">
+            <span>Favorites toggle</span>
+            <span class="shortcut-key">L</span>
+          </div>
+          <div class="shortcut-item">
+            <span>Panic button</span>
+            <span class="shortcut-key" x-text="panicKey ? panicKey.toUpperCase() : 'Not set'"></span>
+          </div>
+          <div class="shortcut-item">
+            <span>Show shortcuts</span>
+            <span class="shortcut-key">?</span>
+          </div>
+        </div>
+        <button @click="showShortcuts = false" class="modal-btn">Got it</button>
       </div>
     </div>
 
@@ -1192,7 +1609,7 @@
         <script type='text/javascript' src='https://www.freevisitorcounters.com/auth.php?id=aac3697a17827feb76b9c30b1d439798f92b3329'></script>
         <script type="text/javascript" src="https://www.freevisitorcounters.com/en/home/counter/1486140/t/3"></script>
       </div>
-      <p class="footer-text">FATE V3 - Made with <span class="heart">❤️</span></p>
+      <p class="footer-text">FATE V3.5 - Made with <span class="heart">❤️</span></p>
     </footer>
 
     <script>
@@ -1215,9 +1632,13 @@
 
       const cdnUrl = "https://mathcenter.space";
       const cdnUrl2 = "https://corsproxy.io/?url=";
-      const CACHE_KEY = 'fate_games_cache';
+      const CACHE_KEY = 'fate_games_cache_v35';
       const CACHE_DURATION = 1000 * 60 * 30;
       const GAMES_PER_PAGE = 24;
+      const FAVORITES_KEY = 'fate_favorites_v35';
+      const RECENT_KEY = 'fate_recent_v35';
+      const CLOAK_KEY = 'fate_cloak_v35';
+      const PANIC_KEY = 'fate_panic_key_v35';
 
       function gamesApp() {
         return {
@@ -1231,12 +1652,19 @@
           popupOpen: false,
           currentGame: null,
           showWarningModal: true,
+          showShortcuts: false,
+          settingsOpen: false,
           usingCache: false,
           isSearching: false,
           searchTimeout: null,
           currentPage: 0,
           hasMoreGames: false,
           activeFilter: 'all',
+          showFavorites: false,
+          favorites: [],
+          recentGames: [],
+          cloakEnabled: false,
+          panicKey: null,
           imageObserver: null,
 
           async init() {
@@ -1244,8 +1672,16 @@
               !window.location.search.includes("nomodal") &&
               !localStorage.getItem("warningModalShown");
 
+            this.favorites = JSON.parse(localStorage.getItem(FAVORITES_KEY) || '[]');
+            this.recentGames = JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+            this.cloakEnabled = localStorage.getItem(CLOAK_KEY) === 'true';
+            this.panicKey = localStorage.getItem(PANIC_KEY);
+            
+            if (this.cloakEnabled) this.applyCloak();
+            this.setupKeyboardShortcuts();
+
             console.log(
-              "%cFATE%c V3 - Enhanced Experience",
+              "%cFATE%c V3.5 - Enhanced Experience",
               "font-size: 16px; background: linear-gradient(135deg, #6366f1, #8b5cf6); border-radius: 8px 0 0 8px; padding: 6px 12px; font-weight: bold; color: white;",
               "font-size: 16px; background: #0a0a0f; font-weight: bold; padding: 6px 12px; border-radius: 0 8px 8px 0; color: #6366f1;"
             );
@@ -1264,6 +1700,11 @@
             }
 
             this.initInfiniteScroll();
+            
+            // Watch for favorites toggle
+            this.$watch('showFavorites', () => {
+              this.applyFilters();
+            });
           },
 
           initImageObserver() {
@@ -1294,7 +1735,7 @@
             if (loadMoreTrigger) {
               const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                  if (entry.isIntersecting && this.hasMoreGames && !this.loadingMore) {
+                  if (entry.isIntersecting && this.hasMoreGames && !this.loadingMore && !this.showFavorites) {
                     this.loadMore();
                   }
                 });
@@ -1302,6 +1743,43 @@
               
               observer.observe(loadMoreTrigger);
             }
+          },
+
+          setupKeyboardShortcuts() {
+            document.addEventListener('keydown', (e) => {
+              if (e.target.tagName === 'INPUT') return;
+              
+              switch(e.key) {
+                case '/':
+                  e.preventDefault();
+                  document.querySelector('.search-input').focus();
+                  break;
+                case 'Escape':
+                  if (this.popupOpen) this.closePopup();
+                  if (this.settingsOpen) this.settingsOpen = false;
+                  if (this.showShortcuts) this.showShortcuts = false;
+                  break;
+                case 'f':
+                case 'F':
+                  if (this.popupOpen) this.fullscreenPopup();
+                  break;
+                case 'r':
+                case 'R':
+                  this.randomGame();
+                  break;
+                case 'l':
+                case 'L':
+                  this.showFavorites = !this.showFavorites;
+                  break;
+                case '?':
+                  this.showShortcuts = true;
+                  break;
+              }
+              
+              if (this.panicKey && e.key.toLowerCase() === this.panicKey.toLowerCase()) {
+                this.triggerPanic();
+              }
+            });
           },
 
           getCachedGames() {
@@ -1413,8 +1891,13 @@
           applyFilters() {
             let filtered = this.allGames;
 
+            // Favorites filter
+            if (this.showFavorites) {
+              filtered = filtered.filter(game => this.isFavorite(game));
+            }
+
             // Category filter
-            if (this.activeFilter !== 'all') {
+            if (this.activeFilter !== 'all' && !this.showFavorites) {
               filtered = filtered.filter(game => game[this.activeFilter] === true);
             }
 
@@ -1430,6 +1913,12 @@
             filtered = [...filtered].sort((a, b) => {
               if (a.name === "Request a game") return -1;
               if (b.name === "Request a game") return 1;
+              if (this.showFavorites) {
+                // Sort favorites by recently added
+                const aFav = this.favorites.indexOf(a.id);
+                const bFav = this.favorites.indexOf(b.id);
+                return aFav - bFav;
+              }
               if (a.new && !b.new) return -1;
               if (!a.new && b.new) return 1;
               if (a.top && !b.top) return -1;
@@ -1445,9 +1934,9 @@
 
           updateVisibleGames() {
             const start = 0;
-            const end = (this.currentPage + 1) * GAMES_PER_PAGE;
+            const end = this.showFavorites ? this.filteredGames.length : (this.currentPage + 1) * GAMES_PER_PAGE;
             this.visibleGames = this.filteredGames.slice(start, end);
-            this.hasMoreGames = end < this.filteredGames.length;
+            this.hasMoreGames = !this.showFavorites && end < this.filteredGames.length;
             
             this.$nextTick(() => {
               this.observeImages();
@@ -1493,6 +1982,9 @@
           async openGame(game) {
             this.currentGame = game;
             this.popupOpen = true;
+            
+            // Add to recent
+            this.addToRecent(game);
 
             await this.$nextTick();
             const iframe = this.$refs.gameFrame;
@@ -1512,6 +2004,21 @@
             } else {
               iframe.src = game.url;
             }
+          },
+
+          addToRecent(game) {
+            // Remove if already exists
+            this.recentGames = this.recentGames.filter(g => g.id !== game.id);
+            // Add to front
+            this.recentGames.unshift(game);
+            // Keep only last 10
+            this.recentGames = this.recentGames.slice(0, 10);
+            localStorage.setItem(RECENT_KEY, JSON.stringify(this.recentGames));
+          },
+
+          clearRecent() {
+            this.recentGames = [];
+            localStorage.removeItem(RECENT_KEY);
           },
 
           closePopup() {
@@ -1536,6 +2043,85 @@
               iframe.msRequestFullscreen();
             }
           },
+
+          // Favorites
+          isFavorite(game) {
+            return this.favorites.includes(game.id);
+          },
+
+          toggleFavorite(game) {
+            if (this.isFavorite(game)) {
+              this.favorites = this.favorites.filter(id => id !== game.id);
+            } else {
+              this.favorites.push(game.id);
+            }
+            localStorage.setItem(FAVORITES_KEY, JSON.stringify(this.favorites));
+            
+            if (this.showFavorites) {
+              this.applyFilters();
+            }
+          },
+
+          randomGame() {
+            if (this.filteredGames.length === 0) return;
+            const random = this.filteredGames[Math.floor(Math.random() * this.filteredGames.length)];
+            this.openGame(random);
+          },
+
+          // Cloak/Stealth mode
+          toggleCloak() {
+            this.cloakEnabled = !this.cloakEnabled;
+            localStorage.setItem(CLOAK_KEY, this.cloakEnabled);
+            if (this.cloakEnabled) {
+              this.applyCloak();
+            } else {
+              this.removeCloak();
+            }
+          },
+
+          applyCloak() {
+            document.title = "Google";
+            const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            link.href = 'https://www.google.com/favicon.ico';
+            document.getElementsByTagName('head')[0].appendChild(link);
+          },
+
+          removeCloak() {
+            document.title = "FATE V3.5 - Games";
+            const link = document.querySelector("link[rel*='icon']");
+            if (link) link.href = 'media/logo.svg';
+          },
+
+          // Panic
+          setPanicKey() {
+            const key = prompt("Press the key you want to set as panic key (or Cancel to remove):");
+            if (key === null) {
+              this.panicKey = null;
+              localStorage.removeItem(PANIC_KEY);
+            } else if (key.length === 1) {
+              this.panicKey = key.toLowerCase();
+              localStorage.setItem(PANIC_KEY, this.panicKey);
+            } else {
+              alert("Please press a single key");
+            }
+          },
+
+          triggerPanic() {
+            window.location.href = 'https://clever.com';
+          },
+
+          clearAllData() {
+            if (confirm("Are you sure you want to clear all data? This includes favorites, recent games, and cache.")) {
+              localStorage.removeItem(CACHE_KEY);
+              localStorage.removeItem(FAVORITES_KEY);
+              localStorage.removeItem(RECENT_KEY);
+              localStorage.removeItem(CLOAK_KEY);
+              localStorage.removeItem(PANIC_KEY);
+              location.reload();
+            }
+          }
         };
       }
     </script>
