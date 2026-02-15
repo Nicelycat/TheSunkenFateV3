@@ -4380,5 +4380,12 @@
     "image": "1v100skibidi.png",
     "new": true,
     "proxy": false
+  },
+  {
+    "name": "Mega man legends",
+    "url": "cdn/megamanlegends/clmegamanlegends.html",
+    "image": "1v100skibidi.png",
+    "new": true,
+    "proxy": false
   }
 ]
