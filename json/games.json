@@ -4310,5 +4310,12 @@
   "image": "media/coolplatformer.png",
   "new": true,
   "proxy": false
+  }, 
+  {
+  "name": "TD6",
+  "url": "cdn/TD6/clbloonsTD6scratch.html",
+  "image": "1v100skidi.png",
+  "new": true,
+  "proxy": false
   }
 ]
