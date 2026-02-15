@@ -4408,5 +4408,12 @@
     "image": "1v100skibidi.png",
     "new": true,
     "proxy": false
+  },
+  {
+    "name": "Five nights at winstons",
+    "url": "cdn/Winston/Winston.html",
+    "image": "media/games/freddy.webp",
+    "new": true,
+    "proxy": false
   }
 ]
