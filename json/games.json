@@ -4394,5 +4394,12 @@
     "image": "1v100skibidi.png",
     "new": true,
     "proxy": false
+  },
+  {
+    "name": "Miami shark",
+    "url": "cdn/miami/clmiamishark.html",
+    "image": "1v100skibidi.png",
+    "new": true,
+    "proxy": false
   }
 ]
