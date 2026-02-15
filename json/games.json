@@ -4359,5 +4359,12 @@
     "image": "1v100skibidi.png",
     "new": true,
     "proxy": false
+  },
+  {
+    "name": "Mega man 5",
+    "url": "cdn/megaman5/clmegaman5.html",
+    "image": "1v100skibidi.png",
+    "new": true,
+    "proxy": false
   }
 ]
