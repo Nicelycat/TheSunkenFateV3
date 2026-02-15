@@ -1229,6 +1229,94 @@
       .cloak-alert.show {
         transform: translateX(-50%) translateY(0);
       }
+
+      /* Modal Styles */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(10, 10, 15, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 9998;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .modal-content {
+        background: rgba(15, 15, 25, 0.95);
+        border: 1px solid var(--glass-border);
+        border-radius: 24px;
+        padding: 2rem;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+      }
+
+      .modal-icon {
+        font-size: 3rem;
+        color: var(--primary);
+        margin-bottom: 1rem;
+      }
+
+      .modal-title {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text);
+      }
+
+      .modal-text {
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
+      }
+
+      .modal-btn {
+        padding: 12px 32px;
+        border-radius: 30px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border: none;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .modal-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+      }
+
+      .shortcuts-list {
+        text-align: left;
+        margin: 1.5rem 0;
+      }
+
+      .shortcut-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid var(--glass-border);
+        color: var(--text-muted);
+      }
+
+      .shortcut-item:last-child {
+        border-bottom: none;
+      }
+
+      .shortcut-key {
+        background: var(--glass);
+        border: 1px solid var(--glass-border);
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-family: monospace;
+        font-size: 0.875rem;
+        color: var(--text);
+      }
     </style>
   </head>
 
@@ -2212,6 +2300,9 @@
             }
           },
 
+          // ============================================
+          // FIXED openGame FUNCTION - NOW SUPPORTS LOCAL GAMES
+          // ============================================
           async openGame(game) {
             if (this.isBanned) return;
             
@@ -2222,6 +2313,7 @@
             const iframe = this.$refs.gameFrame;
 
             if (game.url?.includes("jsdelivr")) {
+              // jsdelivr games - fetch and inject HTML
               try {
                 const response = await fetch(game.url);
                 const html = await response.text();
@@ -2231,11 +2323,21 @@
               } catch (error) {
                 console.error("Error loading jsdelivr content:", error);
               }
-            } else if (!game.proxy) {
-              iframe.src = cdnUrl + `/cdn/${game.url}/`;
+            } else if (game.proxy) {
+              // External proxy games - use direct URL
+              iframe.src = game.url;
+            } else if (game.url?.startsWith('http')) {
+              // External non-proxy games with full URL
+              iframe.src = game.url;
             } else {
+              // ✅ LOCAL GAMES - relative paths (THE FIX!)
+              // Check if it's a local path (doesn't start with http)
+              // This handles paths like: games/49xescape/index.html or cdn/3dash/3dash.html
               iframe.src = game.url;
             }
+            
+            // Add to recently played
+            this.addToRecent(game);
           },
 
           closePopup() {
