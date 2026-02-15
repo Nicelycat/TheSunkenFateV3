@@ -4303,6 +4303,12 @@
     "image": "1v100skibidi.png",
     "new": true,
     "proxy": false
+  }, 
+  {
+  "name": "40x escape",
+  "url": "games/49xescape/index.html",
+  "image": "media/coolplatformer.png",
+  "new": true,
+  "proxy": false
   }
 ]
-
