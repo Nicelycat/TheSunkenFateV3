@@ -4306,7 +4306,7 @@
   }, 
   {
   "name": "40x escape",
-  "url": ".games/49xescape/index.html",
+  "url": "games/49xescape/index.html",
   "image": "media/coolplatformer.png",
   "new": true,
   "proxy": false
