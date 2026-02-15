@@ -4401,5 +4401,12 @@
     "image": "1v100skibidi.png",
     "new": true,
     "proxy": false
+  },
+  {
+    "name": "Minecraft",
+    "url": "cdn/EaglercraftX/EaglercraftX.html",
+    "image": "1v100skibidi.png",
+    "new": true,
+    "proxy": false
   }
 ]
