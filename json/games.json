@@ -4415,5 +4415,12 @@
     "image": "media/games/freddy.webp",
     "new": true,
     "proxy": false
+  },
+  {
+    "name": "Five nights at Epstein",
+    "url": "cdn/Epstein/E.html",
+    "image": "media/games/freddy.webp",
+    "new": true,
+    "proxy": false
   }
 ]
